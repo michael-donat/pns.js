@@ -1,0 +1,14 @@
+{
+    "apps": [
+        {
+            "ignore_watch": [
+                "[\\/\\\\]\\./",
+                "node_modules"
+            ],
+            "name": "pns-server",
+            "node_args": "--harmony",
+            "script": "index.js",
+            "watch": true,
+        }
+    ]
+}
