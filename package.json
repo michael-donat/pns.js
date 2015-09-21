@@ -1,0 +1,41 @@
+{
+  "name": "pns",
+  "version": "1.0.0",
+  "description": "Push notification service wrapper for Apple Push Notifications and Google Cloud Messaging.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/michael-donat/pns.js.git"
+  },
+  "keywords": [
+    "push",
+    "notifications",
+    "apple",
+    "apns",
+    "google",
+    "gcm"
+  ],
+  "author": "Michael Donat <michael.donat@me.com>",
+  "license": "GPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/michael-donat/pns.js/issues"
+  },
+  "homepage": "https://github.com/michael-donat/pns.js#readme",
+  "dependencies": {
+    "apn": "^1.7.4",
+    "body-parser": "^1.13.3",
+    "bunyan": "^1.5.1",
+    "express": "^4.13.3",
+    "jsonschema": "^1.0.2",
+    "moment": "^2.10.6",
+    "node-uuid": "^1.4.3",
+    "redis": "^1.0.0"
+  },
+  "apidoc": {
+    "title": "Push Notification Service",
+    "url": "https://github.com/michael-donat/pns.js"
+  }
+}
