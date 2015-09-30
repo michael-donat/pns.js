@@ -4,6 +4,10 @@ var model = require('./model')
 
 var Service = function(config, cache) {
 
+  config = config || {
+    gateways: []
+  }
+
   this.cache = cache;
   var service = this;
 
@@ -50,10 +54,14 @@ var Service = function(config, cache) {
   }
 
   config.gateways.forEach(function(gateway) {
-    var Gateway = require('./'+gateway.name)
-    new Gateway(gateway.options, service)
+    loadGateway(gateway, service)
   })
 
+}
+
+function loadGateway(gateway, service) {
+  var Gateway = require('./'+gateway.name)
+  new Gateway(gateway.options, service)
 }
 
 function getEventName(message) {

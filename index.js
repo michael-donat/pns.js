@@ -13,4 +13,5 @@ var service = new Service(config, cache)
 var api = new API(service)
 
 service.start();
+
 api.listen(process.env.API_PORT || config.api.port);

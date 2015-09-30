@@ -1,6 +1,7 @@
 var events = require('events')
 var model = require('./model')
 var apn = require('apn');
+var _ = require('lodash');
 
 function mapErrorCode(code) {
   switch(code) {
@@ -33,10 +34,29 @@ var APNS = function(config, service) {
 
   var _this = this;
   var apnsConnection = null;
+  var apnsFeedback = null;
 
   var log = require('./logger').get('apns')
 
   this.connect = function connect() {
+
+      var apnsFeedback = new apn.Feedback(_.assign({
+        batchFeedback: true,
+        interval: 300
+      }, config));
+
+      apnsFeedback.on('error', function(err) {
+        throw err;
+      })
+      apnsFeedback.on('feedbackError', function(err) {
+        log.warn(error)
+      })
+      apnsFeedback.on('feedback', function(devices) {
+        devices.forEach(function(item) {
+            // Do something with item.device and item.time;
+        });
+      });
+
 
       apnsConnection = new apn.Connection(config);
       apnsConnection.on('connected', function() {
@@ -48,7 +68,9 @@ var APNS = function(config, service) {
       apnsConnection.on('transmissionError', function(errorCode, notification, device) {
         var error = errorCode + ' : ' + mapErrorCode(errorCode)
         log.warn(error)
-        _this.emit('msg.result', notification.uuid, model.enum.Status.FAILED, {code: errorCode, message: mapErrorCode(errorCode)})
+        _this.emit('msg.result', notification.uuid, model.enum.Status.FAILED, {
+          code: errorCode, message: mapErrorCode(errorCode)
+        })
       })
       apnsConnection.on('transmitted', function(notification, device) {
         _this.emit('msg.result', notification.uuid, model.enum.Status.SENT)
