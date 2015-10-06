@@ -4,7 +4,7 @@ var API = require('./src/api.js')
 var redis = require('redis')
 
 require('./src/logger').enable([
-  {name: 'api', level: 20}, 'service', 'apns'
+  {name: 'api', level: 20}, 'service', 'apns', 'gcm'
 ])
 
 var cache = redis.createClient();

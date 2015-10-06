@@ -32,6 +32,7 @@
     "jsonschema": "^1.0.2",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
+    "node-gcm": "^0.12.0",
     "node-uuid": "^1.4.3",
     "proxyquire": "^1.7.2",
     "redis": "^1.0.0"

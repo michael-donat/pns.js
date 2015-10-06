@@ -9,6 +9,14 @@
         "pfx": "",
         "passphrase": ""
       }
+    },
+    {
+      "name": "gcm",
+      "options": {
+        "api": {
+          "key": ""
+        }
+      }
     }
   ]
 }

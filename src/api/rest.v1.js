@@ -12,7 +12,8 @@ var messageSchema = {
   "properties": {
     "address": {"$ref": "#/definitions/address"},
     "payload": {"oneOf": [
-      { "$ref": "#/definitions/payload.apple"}
+      { "$ref": "#/definitions/payload.apple"},
+      { "$ref": "#/definitions/payload.gcm.android"}
     ]}
   },
   "definitions": {
@@ -22,7 +23,7 @@ var messageSchema = {
       "required": ["created", "type", "detail"],
       "properties": {
         "created": {"type": "string", "format": "date-time"},
-        "type": {"type": "string", "enum": ["apns", "gcm"]},
+        "type": {"type": "string", "enum": ["apns", "gcm.android"]},
         "detail": {"type": "string"}
       }
     },
@@ -33,6 +34,16 @@ var messageSchema = {
       "properties": {
         "badge": {"type": "integer"},
         "sound": {"type": "string"},
+        "body": {"type": "string"},
+        "payload": {"type": "object"},
+      }
+    },
+    "payload.gcm.android": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": {"type": "string"},
         "body": {"type": "string"},
         "payload": {"type": "object"},
       }
@@ -55,6 +66,15 @@ function Renderer() {
     )
   }
 
+  function buildGCMAndroid(msg) {
+    return new model.message.GCM.Android(
+      msg.address.detail,
+      moment(msg.address.created).utc().format('X'),
+      msg.payload.title,
+      msg.payload.payload
+    )
+  }
+
   this.in = function(msg) {
 
     if (msg instanceof Error) {
@@ -70,12 +90,14 @@ function Renderer() {
     }
 
     if (msg.address.type == 'apns') {
-
       if(!/^[A-F0-9]+$/i.test(msg.address.detail)) {
         throw new model.InvalidRequestError('Detail must be a HEX string.')
       }
-
       return buildAPNS(msg)
+    }
+
+    if (msg.address.type == 'gcm.android') {
+      return buildGCMAndroid(msg)
     }
 
     throw new Error('Not implemented')
@@ -108,6 +130,7 @@ module.exports = function(service) {
     try {
       var message = renderer.in(req.body)
     } catch(err) {
+      console.log(err.stack)
       return renderer.error(err, res)
     }
     service.send(message, function(err, result) {

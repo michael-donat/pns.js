@@ -1,3 +1,5 @@
+var _ = require('lodash')
+
 module.exports.message = {}
 
 module.exports.message.Apple = function(device, registration, sound, badge, body, payload) {
@@ -10,6 +12,17 @@ module.exports.message.Apple = function(device, registration, sound, badge, body
   this.body = body;
 }
 
+module.exports.message.GCM = {
+  Android: function(device, registration, title, body, payload) {
+    this.type = 'gcm.android';
+    this.device = device;
+    this.registration = registration;
+    this.payload = payload;
+    this.title = title;
+    this.body = body;
+  }
+}
+
 module.exports.enum = {}
 
 module.exports.enum.Status = {
@@ -18,6 +31,10 @@ module.exports.enum.Status = {
   SENT: 'sent',
   FAILED: 'failed',
   ERROR: 'error'
+}
+
+module.exports.enum.member = function(test) {
+  return _.includes(module.exports.enum.Status, test)
 }
 
 module.exports.Status = function(uuid, status) {

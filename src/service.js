@@ -45,6 +45,7 @@ var Service = function(config, cache) {
   }
 
   this.result = function(id, status, error) {
+    log.info({id: id, status: status, error: error}, 'Received result.')
     service.status(id, function(err, result) {
       if (err) return;
       result.status = status;
