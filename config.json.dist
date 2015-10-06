@@ -1,0 +1,14 @@
+{
+  "api": {
+    "port": 5061
+  },
+  "gateways": [
+    {
+      "name": "apns",
+      "options": {
+        "pfx": "",
+        "passphrase": ""
+      }
+    }
+  ]
+}
