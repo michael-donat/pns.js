@@ -4,7 +4,7 @@ var proxyquire = require('proxyquire').noCallThru();
 
 var model = _require('model')
 
-describe('Service', function() {
+describe('service', function() {
 
   it('initialises gateways based on config', function() {
 
@@ -145,7 +145,11 @@ describe('Service', function() {
 
       service.status('id', spy)
 
-      spy.should.be.calledWith(sinon.match.instanceOf(model.MessageNotFoundError))
+      spy.should.be.calledWith(
+        sinon.match.instanceOf(model.MessageNotFoundError).and(
+          sinon.match.hasOwn('id', 'id')
+        )
+      )
     })
     it('calls back with parsed cache return', function() {
       var spy = sinon.spy();
