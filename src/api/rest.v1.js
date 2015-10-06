@@ -47,6 +47,7 @@ function Renderer() {
   function buildAPNS(msg) {
     return new model.message.Apple(
       msg.address.detail,
+      moment(msg.address.created).utc().format('X'),
       msg.payload.sound,
       msg.payload.badge,
       msg.payload.body,
@@ -69,6 +70,11 @@ function Renderer() {
     }
 
     if (msg.address.type == 'apns') {
+
+      if(!/^[A-F0-9]+$/i.test(msg.address.detail)) {
+        throw new model.InvalidRequestError('Detail must be a HEX string.')
+      }
+
       return buildAPNS(msg)
     }
 

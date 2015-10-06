@@ -1,8 +1,9 @@
 module.exports.message = {}
 
-module.exports.message.Apple = function(device, sound, badge, body, payload) {
+module.exports.message.Apple = function(device, registration, sound, badge, body, payload) {
   this.type = 'apns';
   this.device = device;
+  this.registration = registration;
   this.payload = payload;
   this.sound = sound;
   this.badge = badge;
@@ -38,8 +39,9 @@ module.exports.InvalidRequestError = function(message) {
   this.type = "InvalidRequestError"
 }
 
-module.exports.MessageNotFoundError = function() {
+module.exports.MessageNotFoundError = function(id) {
   this.message = 'Message not found'
   this.code = 404
   this.type = "MessageNotFoundError"
+  this.id = id
 }

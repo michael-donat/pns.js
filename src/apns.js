@@ -2,6 +2,7 @@ var events = require('events')
 var model = require('./model')
 var apn = require('apn');
 var _ = require('lodash');
+var moment = require('moment')
 
 function mapErrorCode(code) {
   switch(code) {
@@ -42,19 +43,21 @@ var APNS = function(config, service) {
 
       var apnsFeedback = new apn.Feedback(_.assign({
         batchFeedback: true,
-        interval: 300
+        interval: 10
       }, config));
 
       apnsFeedback.on('error', function(err) {
         throw err;
       })
       apnsFeedback.on('feedbackError', function(err) {
-        log.warn(error)
+        log.warn(err)
       })
       apnsFeedback.on('feedback', function(devices) {
+        var multi = service.cache.multi()
         devices.forEach(function(item) {
-            // Do something with item.device and item.time;
+          multi.set('reject#'+item.device.token.toString('hex'), item.time)
         });
+        multi.exec();
       });
 
 
@@ -79,20 +82,33 @@ var APNS = function(config, service) {
 
   this.handle = function handle(msg) {
 
-    //feedback service check here
+    service.cache.get('reject#'+msg.device, function(err, res) {
+      if (res) {
+        //we recognised this token as previously rejected, need to check time
+        //of rejection to see whether it's been reregistered
+        if (res > msg.registration) {
+          //this is a rejected token
+          _this.emit('msg.result', msg.uuid, model.enum.Status.REJECTED, {
+            code: -1, message: 'Token rejected on '+moment.unix(res).format()
+          })
 
-    var device = new apn.Device(msg.device);
-    var note = new apn.Notification();
+          return;
+        }
+      }
 
-    if (msg.badge) note.badge = msg.badge;
-    if (msg.sound) note.sound = msg.sound;
-    if (msg.payload) note.payload = msg.payload;
+      var device = new apn.Device(msg.device);
+      var note = new apn.Notification();
 
-    note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
-    note.alert = msg.body;
-    note.uuid = msg.uuid;
+      if (msg.badge) note.badge = msg.badge;
+      if (msg.sound) note.sound = msg.sound;
+      if (msg.payload) note.payload = msg.payload;
 
-    apnsConnection.pushNotification(note, device);
+      note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+      note.alert = msg.body;
+      note.uuid = msg.uuid;
+
+      apnsConnection.pushNotification(note, device);
+    })
   }
 
   service.on('start', this.connect)
