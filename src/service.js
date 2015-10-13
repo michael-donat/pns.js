@@ -23,7 +23,7 @@ var Service = function(config, cache) {
   this.send = function(message, callback) {
     message.uuid = uuid.v4()
     var status = new model.Status(message.uuid, model.enum.Status.ACCEPTED)
-    cache.set(message.uuid, JSON.stringify(status), 'EX', 60 * 60 * 24, function(err, res) {
+    cache.set('#pns#'+message.uuid, JSON.stringify(status), 'EX', 60 * 60 * 24, function(err, res) {
       if (err) {
         return callback(err)
       }
@@ -33,7 +33,7 @@ var Service = function(config, cache) {
   }
 
   this.status = function(id, callback) {
-    cache.get(id, function(err, res) {
+    cache.get('#pns#'+id, function(err, res) {
       if (err) {
         return callback(err)
       }
@@ -50,7 +50,7 @@ var Service = function(config, cache) {
       if (err) return;
       result.status = status;
       result.error = error;
-      cache.set(id, JSON.stringify(result), 'EX', 60 * 60 * 24)
+      cache.set('#pns#'+id, JSON.stringify(result), 'EX', 60 * 60 * 24)
     })
   }
 

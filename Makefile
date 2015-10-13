@@ -12,3 +12,6 @@ test:
 dev:
 	DEBUG=apn pm2 startOrRestart pm2.json
 	pm2 logs --raw | bunyan -o short
+
+docker:
+	docker build -t michaeldonat/pns.js .

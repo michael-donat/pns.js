@@ -55,7 +55,7 @@ var APNS = function(config, service) {
       apnsFeedback.on('feedback', function(devices) {
         var multi = service.cache.multi()
         devices.forEach(function(item) {
-          multi.set('reject#'+item.device.token.toString('hex'), item.time)
+          multi.set('#pns#reject#'+item.device.token.toString('hex'), item.time)
         });
         multi.exec();
       });
@@ -82,7 +82,7 @@ var APNS = function(config, service) {
 
   this.handle = function handle(msg) {
 
-    service.cache.get('reject#'+msg.device, function(err, res) {
+    service.cache.get('#pns#reject#'+msg.device, function(err, res) {
       if (res) {
         //we recognised this token as previously rejected, need to check time
         //of rejection to see whether it's been reregistered
